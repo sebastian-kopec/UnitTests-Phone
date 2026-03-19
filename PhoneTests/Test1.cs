@@ -102,5 +102,36 @@ namespace PhoneTests
             var ex = Assert.ThrowsExactly<InvalidOperationException>(() => phone.AddContact("NadmiarowaOsoba", "999888777"));
             Assert.AreEqual("Phonebook is full!", ex.Message);
         }
+
+        //TESTY METODY Call
+
+        [TestMethod]
+        public void Call_ExistingContact_ReturnsProperMessage()
+        {
+            //Arrange
+            Phone phone = new Phone("Jan", "123456789");
+            string contactName = "Anna";
+            string contactNumber = "987654321";
+            phone.AddContact(contactName, contactNumber);
+
+            //Act
+            string result = phone.Call(contactName);
+
+            //Assert
+            string expectedMessage = $"Calling {contactNumber} ({contactName}) ...";
+            Assert.AreEqual(expectedMessage, result);
+        }
+
+        [TestMethod]
+        public void Call_NonExistingContact_ThrowsInvalidOperationException()
+        {
+            //Arrange
+            Phone phone = new Phone("Jan", "123456789");
+            phone.AddContact("Anna", "987654321");
+
+            //Act & Assert
+            var ex = Assert.ThrowsExactly<InvalidOperationException>(() => phone.Call("Tomasz"));
+            Assert.AreEqual("Person doesn't exists!", ex.Message);
+        }
     }
 }
