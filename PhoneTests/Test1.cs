@@ -54,5 +54,53 @@ namespace PhoneTests
             var ex = Assert.ThrowsExactly<ArgumentException>(() => new Phone(validOwner, invalidNumber));
             Assert.IsTrue(ex.Message.Contains(expectedMessage));
         }
+
+        //TESTY METODY AddContact
+
+        [TestMethod]
+        public void AddContact_NewContact_ReturnsTrueAndIncreasesCount()
+        {
+            //Arrange
+            Phone phone = new Phone("Jan", "123456789");
+
+            //Act
+            bool result = phone.AddContact("Anna", "987654321");
+
+            //Assert
+            Assert.IsTrue(result);
+            Assert.AreEqual(1, phone.Count);
+        }
+
+        [TestMethod]
+        public void AddContact_ExistingContact_ReturnsFalseAndCountRemainsUnchanged()
+        {
+            //Arrange
+            Phone phone = new Phone("Jan", "123456789");
+            phone.AddContact("Anna", "987654321");
+
+            //Act
+            bool result = phone.AddContact("Anna", "111222333");
+
+            //Assert
+            Assert.IsFalse(result);
+            Assert.AreEqual(1, phone.Count); //Liczba kontaktów nie powinna wzrosnąć
+        }
+
+        [TestMethod]
+        public void AddContact_PhoneBookFull_ThrowsInvalidOperationException()
+        {
+            //Arrange
+            Phone phone = new Phone("Jan", "123456789");
+
+            //Wypełniamy książkę telefoniczną do pełna (100 kontaktów)
+            for (int i = 0; i < phone.PhoneBookCapacity; i++)
+            {
+                phone.AddContact($"Osoba{i}", "111222333");
+            }
+
+            //Act & Assert
+            var ex = Assert.ThrowsExactly<InvalidOperationException>(() => phone.AddContact("NadmiarowaOsoba", "999888777"));
+            Assert.AreEqual("Phonebook is full!", ex.Message);
+        }
     }
 }
